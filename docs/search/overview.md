@@ -1,6 +1,6 @@
 # Search
 
-The home page asks “Does T3 Code already do this?” and looks up the idea in a committed index of real T3 Code settings, user docs, and release notes.
+The suggestion composer looks up a typed idea in a committed index of real T3 Code settings, user docs, and release notes. That lookup is lexical by default, with an optional embeddings rerank. It does not call OpenRouter.
 
 ## Index
 
@@ -29,8 +29,4 @@ Otherwise the lexical result is used, including when the request errors.
 
 ## Suggestions
 
-While the field is empty and focused, recent searches saved in this browser are listed when any exist. Typing asks `/api/suggest` for a few real index matches and keeps the list closed until one exists. Arrow keys move the highlight. Enter opens the highlighted row and keeps the typed question in the field. The return button searches the typed question directly.
-
-## What a hit shows
-
-The card says the feature already shipped, shows the real title, where to find it, a match percent derived from the score, and one source link. A doc link is preferred when the entry has one. Release entries link to the release note.
+`/api/dedup` returns up to four feature matches for the title and description being typed. The list stays empty until the title is long enough to search. “Yes, that's it” shows where that feature lives and links to its doc or release note. Existing posts are returned from Convex in the same response and are not part of this index.

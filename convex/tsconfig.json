@@ -12,8 +12,15 @@
     "jsx": "react-jsx",
     "skipLibCheck": true,
     "noEmit": true,
-    "isolatedModules": true
+    "isolatedModules": true,
+    "resolveJsonModule": true
   },
-  "include": ["./**/*.ts", "../src/proposals/**/*.ts", "../src/text/**/*.ts"],
+  "include": [
+    "./**/*.ts",
+    "../src/proposals/**/*.ts",
+    "../src/posts/**/*.ts",
+    "../src/jobs/**/*.ts",
+    "../src/text/**/*.ts"
+  ],
   "exclude": ["node_modules"]
 }

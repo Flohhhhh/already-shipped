@@ -7,6 +7,7 @@ import { env } from "@/env";
 import { embedQuery } from "@/server/search/embeddings";
 import { searchFeatures, searchWithVectors } from "@/server/search/match";
 import type {
+  FeatureEntry,
   FeatureIndex,
   SearchResult,
   Suggestion,
@@ -49,8 +50,11 @@ export function suggestCatalog(query: string): Suggestion[] {
   }));
 }
 
-export async function searchCatalog(query: string): Promise<SearchResult> {
-  const entries = loadIndex().entries;
+export async function searchCatalog(
+  query: string,
+  extras: FeatureEntry[] = [],
+): Promise<SearchResult> {
+  const entries = [...loadIndex().entries, ...extras];
   const lexical = searchFeatures(query, entries);
   if (env.ALREADY_SHIPPED_MATCHER !== "embeddings") return lexical;
   const baseUrl = env.ALREADY_SHIPPED_EMBEDDINGS_BASE_URL;
