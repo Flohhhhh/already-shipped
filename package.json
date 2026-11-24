@@ -1,0 +1,55 @@
+{
+  "name": "already-shipped",
+  "version": "0.1.0",
+  "private": true,
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "format:check": "node scripts/forward.mjs prettier --check",
+    "format:write": "node scripts/forward.mjs prettier --write",
+    "lint": "node scripts/forward.mjs eslint",
+    "lint:fix": "node scripts/forward.mjs eslint --fix",
+    "typecheck": "next typegen && tsc --noEmit -p tsconfig.json && tsc --noEmit -p convex/tsconfig.json",
+    "check": "pnpm format:check . && pnpm lint . && pnpm typecheck",
+    "test": "vitest run",
+    "test:unit": "vitest run",
+    "test:unit:watch": "vitest",
+    "index": "node scripts/build-feature-index.mjs"
+  },
+  "dependencies": {
+    "@base-ui/react": "^1.9.0",
+    "@t3-oss/env-nextjs": "^0.13.11",
+    "class-variance-authority": "^0.7.1",
+    "cn": "^0.5.2",
+    "convex": "^1.51.0",
+    "lucide-react": "^1.79.0",
+    "motion": "^14.14.0",
+    "next": "16.4.6",
+    "next-themes": "^0.4.6",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "server-only": "^0.0.1",
+    "shadcn": "^4.23.0",
+    "tw-animate-css": "^1.4.0",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@tailwindcss/turbopack": "4.3.3",
+    "@types/node": "^22.20.5",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.4.6",
+    "prettier": "^3.10.1",
+    "prettier-plugin-tailwindcss": "^0.8.1",
+    "tailwindcss": "4.3.3",
+    "typescript": "^5",
+    "typescript-eslint": "8.74.0",
+    "vitest": "^5.1.1"
+  },
+  "packageManager": "pnpm@10.33.4"
+}
