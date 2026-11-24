@@ -1,23 +1,23 @@
-# Proposals
+# Posts
 
-When search does not find a close feature, the visitor can add the idea to **Proposed: not found**. The same list is on `/proposed`.
+Requests live in Convex as posts. The old public proposal list and browser voter id are gone. Near-duplicate text still uses the shared fingerprint helper.
 
 ## Data
 
-Convex tables:
+- `users`: display name, image, and `github` or `discord`.
+- `posts`: title, description, token key, optional cleaned title, category, shipped version, vote count, author.
+- `postTokens`: one row per token, used to load a bounded candidate set.
+- `votes`: one row per post and user.
+- `mergeSuggestions`: a possible duplicate queued for confirmation. Status is `pending`, `confirmed`, or `dismissed`.
+- `catalogNotes`: cleaned one-line release summaries written by the index refresh.
+- `digests`: weekly theme summaries.
 
-- `proposals`: text, canonical token key, vote count, created time.
-- `proposalTokens`: one row per canonical token, indexed for candidate lookup.
-- `votes`: one row per proposal and voter id.
+## Rules
 
-There is no login. The browser stores a UUID and sends it with propose and vote calls. One id can upvote a proposal once. Clicking again removes that vote.
+A title is 8–120 characters and a description is 8–2000. The title needs at least two meaningful tokens. An exact token key, or a Jaccard match at or above 0.72, adds a vote to the existing post instead of creating another. The author starts with one vote. Voting again removes it.
 
-## Dedupe
-
-Text is cleaned, tokenized with the same synonym map as search, and sorted into a key. An exact key hits the `by_normalizedKey` index. Otherwise the mutation loads a bounded set of proposals that share those tokens and keeps the closest one at or above a Jaccard threshold of 0.72. A duplicate does not create a new row; the voter’s vote is added when they have not already voted.
-
-Proposals shorter than 8 characters, longer than 200, or with fewer than two meaningful tokens are rejected.
+Signing in uses Convex Auth with GitHub and Discord. Browsing does not require an account. `jobs.enrichPost` may later clean the title, set a category, and queue merge suggestions. Those suggestions never merge the rows.
 
 ## Without Convex
 
-`NEXT_PUBLIC_CONVEX_URL` comes from `npx convex dev`. When it is absent, search still runs and the proposal UI says a Convex deployment is required.
+Feature matches in the composer still run from the committed index. The list, votes, digest, and background jobs need `NEXT_PUBLIC_CONVEX_URL`.

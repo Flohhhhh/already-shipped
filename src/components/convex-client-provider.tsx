@@ -1,25 +1,20 @@
 "use client";
 
-import { ConvexProvider, ConvexReactClient } from "convex/react";
-import { useSyncExternalStore, type ReactNode } from "react";
+import { ConvexAuthNextjsProvider } from "../../node_modules/@convex-dev/auth/dist/ssr/nextjs/client.js";
+import { getFunctionName } from "convex/server";
+import { type ReactNode } from "react";
 
-let singleton: ConvexReactClient | null = null;
+import { useClientReady } from "@/components/use-client-ready";
+import { api } from "../../convex/_generated/api";
 
-export function ConvexClientProvider({
-  url,
-  children,
-  fallback = null,
-}: {
-  url: string;
-  children: ReactNode;
-  fallback?: ReactNode;
-}) {
-  const mounted = useSyncExternalStore(
-    () => () => {},
-    () => true,
-    () => false,
+export function ConvexClientProvider({ children }: { children: ReactNode }) {
+  const ready = useClientReady();
+  if (!process.env.NEXT_PUBLIC_CONVEX_URL || !ready) return children;
+  return (
+    <ConvexAuthNextjsProvider
+      isAuthenticatedFunctionName={getFunctionName(api.auth.isAuthenticated)}
+    >
+      {children}
+    </ConvexAuthNextjsProvider>
   );
-  if (!mounted) return fallback;
-  singleton ??= new ConvexReactClient(url);
-  return <ConvexProvider client={singleton}>{children}</ConvexProvider>;
 }

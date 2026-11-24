@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Instrument_Sans } from "next/font/google";
 
+import { ConvexClientProvider } from "@/components/convex-client-provider";
 import { ThemeProvider } from "@/components/theme-provider";
 
 import "./globals.css";
@@ -12,7 +13,7 @@ const sans = Instrument_Sans({
 
 export const metadata: Metadata = {
   title: "already-shipped",
-  description: "Does T3 Code already do this?",
+  description: "Feature suggestions for T3 Code.",
 };
 
 export const viewport: Viewport = {
@@ -35,7 +36,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <ConvexClientProvider>{children}</ConvexClientProvider>
         </ThemeProvider>
       </body>
     </html>

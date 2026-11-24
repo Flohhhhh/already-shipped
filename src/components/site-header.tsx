@@ -5,6 +5,10 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 
+import { AccountButton } from "@/components/account-menu";
+import { useClientReady } from "@/components/use-client-ready";
+import { useQuery } from "convex/react";
+import { api } from "../../convex/_generated/api";
 import { ThemeSwitch } from "@/components/theme-switch";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,14 +22,62 @@ import {
 } from "@/components/ui/drawer";
 
 const LINKS = [
-  { href: "/", label: "Search" },
-  { href: "/proposed", label: "Requests" },
+  { href: "/", label: "Board" },
+  { href: "/digest", label: "Digest" },
 ] as const;
 
 function isCurrent(pathname: string, href: string) {
   return href === "/"
     ? pathname === "/"
     : pathname === href || pathname.startsWith(`${href}/`);
+}
+
+function AdminNav({
+  pathname,
+  sheet = false,
+}: {
+  pathname: string;
+  sheet?: boolean;
+}) {
+  const admin = useQuery(api.admin.isAdmin);
+  if (!admin) return null;
+  const current = isCurrent(pathname, "/admin");
+  if (sheet) {
+    return (
+      <DrawerClose
+        nativeButton={false}
+        render={<Link href="/admin" />}
+        className="flex min-h-14 w-full items-center justify-between px-3 text-base"
+        aria-current={current ? "page" : undefined}
+      >
+        Admin
+        {current ? <Check aria-hidden className="size-5" /> : null}
+      </DrawerClose>
+    );
+  }
+  return (
+    <Button
+      nativeButton={false}
+      variant={current ? "outline" : "quiet"}
+      aria-current={current ? "page" : undefined}
+      className={`h-8 rounded-full px-4 ${current ? "bg-card border-transparent shadow-sm" : ""}`}
+      render={<Link href="/admin" />}
+    >
+      Admin
+    </Button>
+  );
+}
+
+function AdminLink({
+  pathname,
+  sheet = false,
+}: {
+  pathname: string;
+  sheet?: boolean;
+}) {
+  const ready = useClientReady();
+  if (!ready || !process.env.NEXT_PUBLIC_CONVEX_URL) return null;
+  return <AdminNav pathname={pathname} sheet={sheet} />;
 }
 
 function NavLinks({ pathname }: { pathname: string }) {
@@ -74,7 +126,7 @@ function MobileMenu({ pathname }: { pathname: string }) {
         <DrawerHeader className="items-center pb-2 text-center">
           <DrawerTitle>Menu</DrawerTitle>
           <DrawerDescription className="sr-only">
-            Search, requests, and appearance.
+            Board, digest, and appearance.
           </DrawerDescription>
         </DrawerHeader>
         <nav aria-label="Primary" className="px-3">
@@ -100,6 +152,12 @@ function MobileMenu({ pathname }: { pathname: string }) {
             })}
           </ul>
         </nav>
+        <div className="px-3">
+          <AdminLink pathname={pathname} sheet />
+        </div>
+        <div className="mt-4 px-6">
+          <AccountButton inline />
+        </div>
         <div className="mt-4 flex items-center justify-between gap-4 px-6 pt-2">
           <p className="text-base">Appearance</p>
           <ThemeSwitch />
@@ -125,9 +183,11 @@ export function SiteHeader() {
         className="bg-muted col-start-2 hidden items-center gap-1 justify-self-center rounded-full p-1 md:flex"
       >
         <NavLinks pathname={pathname} />
+        <AdminLink pathname={pathname} />
       </nav>
       <div className="col-start-2 justify-self-end md:col-start-3">
-        <div className="hidden md:block">
+        <div className="hidden items-center gap-2 md:flex">
+          <AccountButton />
           <ThemeSwitch compact />
         </div>
         <div className="md:hidden">
